@@ -37,14 +37,14 @@ class Datakesehatan:
     def hapus_data(self,nama):
         if nama in self.data:
             del self.data[nama]
-            print("+========================+")
-            print("|  Data telah di hapus.  |")
-            print("+========================+")
+            print("+===============================+")
+            print("|  Data Pasien telah di hapus.  |")
+            print("+===============================+")
             
         else:
-            print("+=========================+")
-            print("|  Data tidak di temukan  |")
-            print("+=========================+")
+            print("+================================+")
+            print("|  Data Pasien tidak di temukan  |")
+            print("+================================+")
             
     def tampilan_data(self):
         if self.data:
@@ -58,7 +58,7 @@ class Datakesehatan:
             print (table)
         else:
             print("+============================+")
-            print("|  Belum ada data kesehatan  |")
+            print("|    Belum ada data Pasien   |")
             print("+============================+")
                 
     def cari_data(self, nama):
@@ -73,6 +73,15 @@ class Datakesehatan:
             print("Data {} tidak di temukan".format(nama))
             print("=====================================")
             
+    def update_data(self, nama, usia_baru, tinggi_baru, berat_baru):
+        if nama in self.data:
+            self.data[nama].usia = usia_baru
+            self.data[nama].tinggi = tinggi_baru
+            self.data[nama].berat = berat_baru
+            print("Data kesehatan atas nama {} berhasil di perbarui.".format(nama))
+        else:
+            print("Data kesehatan atas nama {} tidak di temukan.".format(nama))
+            
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
     
@@ -85,13 +94,14 @@ def main():
     
     while True:
         print("\n+=========================================+")
-        print("|            Menu Data Kesehatan          |")
+        print("|       Menu Data Program Kesehatan       |")
         print("|=========================================|")
-        print("|         1. Tambah Data Kesehatan        |")
-        print("|         2. Hapus Data Kesehatan         |")
-        print("|         3. Tampilkan Data Kesehatan     |")
-        print("|         4. Cari Data Kesehatan          |")
-        print("|         5. Keluar Dari Program          |")
+        print("|         1. Tambah Data Pasien           |")
+        print("|         2. Tampilkan Data Pasien        |")
+        print("|         3. Cari Data Pasien             |")
+        print("|         4. Update Data Pasien           |")
+        print("|         5. Hapus Data Pasien            |")
+        print("|         6. Keluar Dari Program          |")
         print("+=========================================+")
         
         pilihan = input ("Masukan pilihan menu data kesehatan: ")
@@ -130,25 +140,44 @@ def main():
             print("Status BMI: {}".format(status))
             time.sleep(2)
             clear_screen()
+            
         elif pilihan == "2":
+            data_kesehatan.tampilan_data()
+            input("Tekan enter untuk kembali ke menu utama...")
+            
+        elif pilihan == "3":
+            nama = input("Masukan nama yang ingin di cari: ")
+            data_kesehatan.cari_data(nama)
+            input("Tekan enter untuk kembali ke menu utama...")
+            
+        elif pilihan == "4":
+            nama = input ("Masukan nama data yang ingin di ubah: ")
+            if nama in data_kesehatan.data:
+                usia_baru = int(input("Masukan usia baru (Tahun): "))
+                tinggi_baru = float(input("Masukan tinggi baru (Cm): "))
+                berat_baru = float(input("Masukan berat baru (Kg): "))
+                data_kesehatan.update_data(nama, usia_baru, tinggi_baru, berat_baru)
+                data_kesehatan.tampilan_data()
+            else:
+                print("+=====================================================+")
+                print("|  Data pasien tidak di temukan. silahkan coba lagi   |")
+                print("+=====================================================+")
+                
+        elif pilihan == "5":
             nama = input("Masukan nama yang ingin di hapus: ")
             data_kesehatan.hapus_data(nama)
             time.sleep(2)
             clear_screen()
-        elif pilihan == "3":
-            data_kesehatan.tampilan_data()
-            input("Tekan enter untuk kembali ke menu utama...")
-        elif pilihan == "4":
-            nama = input("Masukan nama yang ingin di cari: ")
-            data_kesehatan.cari_data(nama)
-            input("Tekan enter untuk kembali ke menu utama...")
-        elif pilihan == "5":
+            
+        elif pilihan == "6":
             print("+==========================================================================================+")
             print("|         Terimakasih telah menggunakan program kesehatan, Sampai jumpa lagi!!!            |")
             print("+==========================================================================================+")
             break
         else:
-            print("Pilihan tidak ada di dalam daftar menu kesehatan")
+            print("+==========================================================================================+")
+            print("|                Pilihan tidak ada di dalam daftar menu data program kesehatan             |")
+            print("+==========================================================================================+")
             
 if __name__== "__main__":
     main()
