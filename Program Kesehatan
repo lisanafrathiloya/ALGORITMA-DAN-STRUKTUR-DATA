@@ -1,0 +1,154 @@
+#PRAKTIKUM ASD (1)
+from prettytable import PrettyTable
+import time 
+import os
+
+
+class kesehatan:
+    def __init__(self, nama, usia, tinggi, berat):
+        self.nama = nama 
+        self.usia = usia 
+        self.tinggi = tinggi
+        self.berat = berat
+        
+    def hitung_bmi(self): 
+        tinggi_m = self.tinggi / 100
+        bmi = self.berat / (tinggi_m ** 2)
+        return bmi
+    
+    def status_bmi(self):
+        bmi = self.hitung_bmi()
+        if bmi< 18.5:
+            return "Kurus"
+        elif 18.5<= bmi <24.9:
+            return "Normal"
+        elif 24.9<= bmi <29.9:
+            return "Gemuk"
+        else:
+            return "Obesitas"
+        
+class Datakesehatan:
+    def __init__(self):
+        self.data = {}
+    
+    def tambah_data(self, kesehatan):
+        self.data[kesehatan.nama] = kesehatan
+    
+    def hapus_data(self,nama):
+        if nama in self.data:
+            del self.data[nama]
+            print("+========================+")
+            print("|  Data telah di hapus.  |")
+            print("+========================+")
+            
+        else:
+            print("+=========================+")
+            print("|  Data tidak di temukan  |")
+            print("+=========================+")
+            
+    def tampilan_data(self):
+        if self.data:
+            nomor = 1
+            table= PrettyTable()
+            table.field_names= ["No", "Nama", "Usia (Tahun)", "Tinggi (Cm)", "Berat (Kg)", "BMI", "Status BMI" ]
+            table.title = "Data pasien program kesehatan berat dan tinggi badan ideal"
+            for nama , kesehatan in self.data.items():
+                table.add_row([nomor, nama, kesehatan.usia, kesehatan.tinggi, kesehatan.berat, kesehatan.hitung_bmi(), kesehatan.status_bmi()])
+                nomor += 1
+            print (table)
+        else:
+            print("+============================+")
+            print("|  Belum ada data kesehatan  |")
+            print("+============================+")
+                
+    def cari_data(self, nama):
+        if nama in self.data:
+            kesehatan = self.data[nama]
+            table = PrettyTable(["Nama", "Usia (Tahun)", "Tinggi (Cm)", "Berat (Kg)", "BMI", "Status BMi" ])
+            table.title = "Data pasien program kesehatan berat dan tinggi badan ideal"
+            table.add_row([nama, kesehatan.usia, kesehatan.tinggi, kesehatan.berat, kesehatan.hitung_bmi(), kesehatan.status_bmi()])
+            print (table)
+        else:
+            print("=====================================")
+            print("Data {} tidak di temukan".format(nama))
+            print("=====================================")
+            
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    
+def main():
+    print("+==========================================================================================+")
+    print("|        Halo!!! Selamat datang di program kesehatan berat dan tinggi badan ideal          |")
+    print("+==========================================================================================+")
+    time.sleep(2)
+    data_kesehatan= Datakesehatan()
+    
+    while True:
+        print("\n+=========================================+")
+        print("|            Menu Data Kesehatan          |")
+        print("|=========================================|")
+        print("|         1. Tambah Data Kesehatan        |")
+        print("|         2. Hapus Data Kesehatan         |")
+        print("|         3. Tampilkan Data Kesehatan     |")
+        print("|         4. Cari Data Kesehatan          |")
+        print("|         5. Keluar Dari Program          |")
+        print("+=========================================+")
+        
+        pilihan = input ("Masukan pilihan menu data kesehatan: ")
+        
+        if pilihan == "1":
+            while True:
+                nama = input ("Masukan Nama: ")
+                usia_input = input("Masukan usia(tahun): ")
+                if usia_input.isdigit(): 
+                    usia = int (usia_input)
+                    break
+                else:
+                    print("Usia harus berupa angka. Silahkan coba lagi.")
+            
+            while True:
+                tinggi_input = input("Masukan Tinggi(Cm):")
+                if tinggi_input.replace('.', '', 1).isdigit():
+                    tinggi = float(tinggi_input)
+                    break
+                else:
+                    print("Tinngi harus berupa angka. Silahkan coba lagi.")
+                    
+            while True:
+                berat_input = input ("Masukan Berat(Kg): ")
+                if berat_input.replace('.', '', 1).isdigit():
+                    berat = float(berat_input)
+                    break
+                else:
+                    print("Berat harus berupa angka. Silahkan di coba lagi.")
+                    
+            kesehatan_data = kesehatan(nama, usia, tinggi, berat)
+            data_kesehatan.tambah_data(kesehatan_data)
+            bmi = kesehatan_data.hitung_bmi()
+            status = kesehatan_data.status_bmi()
+            print("Data atas nama {} berhasil di tambahkan.".format(nama))
+            print("Status BMI: {}".format(status))
+            time.sleep(2)
+            clear_screen()
+        elif pilihan == "2":
+            nama = input("Masukan nama yang ingin di hapus: ")
+            data_kesehatan.hapus_data(nama)
+            time.sleep(2)
+            clear_screen()
+        elif pilihan == "3":
+            data_kesehatan.tampilan_data()
+            input("Tekan enter untuk kembali ke menu utama...")
+        elif pilihan == "4":
+            nama = input("Masukan nama yang ingin di cari: ")
+            data_kesehatan.cari_data(nama)
+            input("Tekan enter untuk kembali ke menu utama...")
+        elif pilihan == "5":
+            print("+==========================================================================================+")
+            print("|         Terimakasih telah menggunakan program kesehatan, Sampai jumpa lagi!!!            |")
+            print("+==========================================================================================+")
+            break
+        else:
+            print("Pilihan tidak ada di dalam daftar menu kesehatan")
+            
+if __name__== "__main__":
+    main()
