@@ -1,0 +1,341 @@
+from prettytable import PrettyTable
+import time 
+import os
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+        
+class LinkedList:
+    def __init__(self):
+        self.head = None
+        
+    def tambah_data(self, kesehatan):
+        new_node = Node(kesehatan)
+        if not self.head:
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = new_node
+            
+    def tambah_di_awal(self, kesehatan):
+        new_node = Node(kesehatan)
+        new_node.next = self.head
+        self.head = new_node
+        
+    def tambah_di_posisi(self, kesehatan, posisi):
+        if posisi < 0:
+            print("Posisi tidak valid.")
+            return
+        if posisi == 0:
+            self.tambah_di_awal(kesehatan)
+            return
+        new_node = Node(kesehatan)
+        current = self.head
+        count = 0
+        while current and count < posisi - 1:
+            current = current.next
+            count += 1
+        if current is None:
+            print("Posisi melebihi panjang Linked List")
+            return
+        new_node.next = current.next
+        current.next = new_node
+        
+    def tambah_di_akhir(self, kesehatan):
+        new_node = Node(kesehatan)
+        if not self.head:
+            self.head = new_node
+            return
+        current = self.head
+        while current.next:
+            current = current.next
+        current.next = new_node
+        
+    def hapus_di_awal(self):
+        if not self.head:
+            print("Linked List kosong. Tidak ada yang dihapus.")
+            return
+        self.head = self.head.next
+        
+    def hapus_di_akhir(self):
+        if not self.head:
+            print("Linked List kosong. Tidak ada yang dihapus.")
+            return
+        if not self.head.next:
+            self.head = None
+            return
+        current = self.head
+        while current.next.next:
+            current = current.next
+        current.next = None
+        
+    def hapus_di_posisi(self, posisi):
+        if not self.head:
+            print("Linked List kosong. Tidak ada yang dihapus.")
+            return
+        if posisi == 0:
+            self.hapus_di_awal()
+            return
+        current = self.head
+        prev = None
+        count = 0
+        while current and count != posisi:
+            prev = current
+            current = current.next
+            count += 1
+        if current is None:
+            print("Posisi melebihi panjang Linked List")
+            return
+        prev.next = current.next
+        
+    def tampilan_data(self):
+        if not self.head:
+            print("+============================+")
+            print("|    Belum ada data Pasien   |")
+            print("+============================+")
+            return
+        
+        table = PrettyTable(["No", "Nama", "Usia", "Tinggi (cm)", "Berat (kg)", "BMI", "Status BMI"])
+        table.title = "Data Pasien Program Kesehatan"
+        current = self.head
+        nomor = 1
+        while current:
+            bmi = current.data.hitung_bmi()
+            status = current.data.status_bmi()
+            table.add_row([nomor, current.data.nama, current.data.usia, current.data.tinggi, current.data.berat, bmi, status])
+            current = current.next
+            nomor += 1
+        print(table)
+
+            
+    def update_data(self, nama, usia_baru, tinggi_baru, berat_baru):
+        current = self.head
+        while current:
+            if current.data.nama == nama:
+                current.data.usia = usia_baru
+                current.data.tinggi = tinggi_baru
+                current.data.berat = berat_baru
+                print("Data kesehatan atas nama {} berhasil di perbarui.".format(nama))
+                return
+            current = current.next
+        print("Data kesehatan atas nama {} tidak ditemukan.".format(nama))
+        
+    def bubble_sort(self):
+        if not self.head:
+            print("Linked List kosong.")
+            return
+        swapped = True
+        while swapped:
+            current = self.head
+            swapped = False
+            while current.next:
+                if current.data.usia > current.next.data.usia:
+                    current.data, current.next.data = current.next.data, current.data
+                    swapped = True
+                current = current.next
+                
+    def bubble_sort_nama(self):
+        if not self.head:
+            print("Linked List kosong.")
+            return
+        swapped = True
+        while swapped:
+            current = self.head
+            swapped = False
+            while current.next:
+                if current.data.nama > current.next.data.nama:
+                    current.data, current.next.data = current.next.data, current.data
+                    swapped = True
+                current = current.next
+
+class kesehatan:
+    def __init__(self, nama, usia, tinggi, berat):
+        self.nama = nama 
+        self.usia = usia 
+        self.tinggi = tinggi
+        self.berat = berat
+        
+    def hitung_bmi(self): 
+        tinggi_m = self.tinggi / 100
+        bmi = self.berat / (tinggi_m ** 2)
+        return bmi
+    
+    def status_bmi(self):
+        bmi = self.hitung_bmi()
+        if bmi< 18.5:
+            return "Kurus"
+        elif 18.5<= bmi <24.9:
+            return "Normal"
+        elif 24.9<= bmi <29.9:
+            return "Gemuk"
+        else:
+            return "Obesitas"
+        
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    
+def main():
+    print("+==========================================================================================+")
+    print("|        Halo!!! Selamat datang di program kesehatan berat dan tinggi badan ideal          |")
+    print("+==========================================================================================+")
+    time.sleep(2)
+    data_kesehatan = LinkedList()
+    hapus_pilihan = ""
+    
+    while True:
+        print("\n+=========================================+")
+        print("|       Menu Data Program Kesehatan       |")
+        print("|=========================================|")
+        print("|         1. Tambah Data Pasien           |")
+        print("|         2. Tampilkan Data Pasien        |")
+        print("|         3. Update Data Pasien           |")
+        print("|         4. Mengurutkan Data Pasien      |")
+        print("|         5. Hapus Data Pasien            |")
+        print("|         6. Keluar Dari Program          |")
+        print("+=========================================+")
+        
+        pilihan = input ("Masukan pilihan menu data kesehatan: ")
+        
+        if pilihan == "1":
+            while True:
+                nama = input ("Masukan Nama: ")
+                usia_input = input("Masukan usia(tahun): ")
+                if usia_input.isdigit(): 
+                    usia = int (usia_input)
+                    break
+                else:
+                    print("Usia harus berupa angka. Silahkan coba lagi.")
+            
+            while True:
+                tinggi_input = input("Masukan Tinggi(Cm):")
+                if tinggi_input.replace('.', '', 1).isdigit():
+                    tinggi = float(tinggi_input)
+                    break
+                else:
+                    print("Tinggi harus berupa angka. Silahkan coba lagi.")
+                    
+            while True:
+                berat_input = input ("Masukan Berat(Kg): ")
+                if berat_input.replace('.', '', 1).isdigit():
+                    berat = float(berat_input)
+                    break
+                else:
+                    print("Berat harus berupa angka. Silahkan di coba lagi.")
+                    
+            kesehatan_data = kesehatan(nama, usia, tinggi, berat)
+            print("\n+=========================================+")
+            print("|    Metode penambahan data:             |")
+            print("|     1. Di awal                         |")
+            print("|     2. Di posisi tertentu              |")
+            print("|     3. Di akhir                        |")
+            print("+=========================================+")
+            metode_pilihan = input("Masukkan metode penambahan data: ")
+            if metode_pilihan == "1":
+                data_kesehatan.tambah_di_awal(kesehatan_data)
+                bmi = kesehatan_data.hitung_bmi()
+                status = kesehatan_data.status_bmi()
+                print("Data atas nama {} berhasil ditambahkan.".format(nama))
+                print("Status BMI: {}".format(status))
+            elif metode_pilihan == "2":
+                posisi = int(input("Masukkan posisi penambahan data: "))
+                data_kesehatan.tambah_di_posisi(kesehatan_data, posisi)
+                bmi = kesehatan_data.hitung_bmi()
+                status = kesehatan_data.status_bmi()
+                print("Data atas nama {} berhasil ditambahkan.".format(nama))
+                print("Status BMI: {}".format(status))
+            elif metode_pilihan == "3":
+                data_kesehatan.tambah_di_akhir(kesehatan_data)
+                bmi = kesehatan_data.hitung_bmi()
+                status = kesehatan_data.status_bmi()
+                print("Data atas nama {} berhasil ditambahkan.".format(nama))
+            else:
+                print("Pilihan tidak valid.")
+            time.sleep(2)
+            clear_screen()
+            
+        elif pilihan == "2":
+            data_kesehatan.tampilan_data()
+            input("Tekan enter untuk kembali ke menu utama...")
+            
+        elif pilihan == "3":
+            nama = input ("Masukan nama data yang ingin diubah: ")
+            if nama in data_kesehatan.data:
+                usia_baru = int(input("Masukkan usia baru (Tahun): "))
+                tinggi_baru = float(input("Masukkan tinggi baru (Cm): "))
+                berat_baru = float(input("Masukkan berat baru (Kg): "))
+                data_kesehatan.update_data(nama, usia_baru, tinggi_baru, berat_baru)
+                data_kesehatan.tampilan_data()
+            else:
+                print("+=====================================================+")
+                print("|  Data pasien tidak ditemukan. Silahkan coba lagi    |")
+                print("+=====================================================+")
+                
+        elif pilihan == "4":
+            print("\n+=========================================+")
+            print("|       Menu Mengurutkan Data Pasien      |")
+            print("|=========================================|")
+            print("|     1. Mengurutkan Berdasarkan Usia     |")
+            print("|     2. Mengurutkan Berdasarkan Nama     |")
+            print("|     3. Kembali ke Menu Utama            |")
+            print("+=========================================+")
+            sorting_choice = input("Masukkan pilihan untuk melakukan pengurutan: ")
+            if sorting_choice == "1":
+                data_kesehatan.bubble_sort()
+                print("Data berhasil diurutkan berdasarkan usia.")
+            elif sorting_choice == "2":
+                data_kesehatan.bubble_sort_nama()
+                print("Data berhasil diurutkan berdasarkan nama.")
+            elif sorting_choice == "3":
+                continue
+            else:
+                print("Pilihan tidak valid.")
+                
+        elif pilihan == "5":
+            print("\n+=========================================+")
+            print("|      Menu Hapus Data Pasien              |")
+            print("|==========================================|")
+            print("|         1. Hapus di awal                 |")
+            print("|         2. Hapus di akhir                |")
+            print("|         3. Hapus di posisi tertentu      |")
+            print("+==========================================+")
+            hapus_pilihan = input("Masukkan pilihan untuk menghapus data: ")  
+            
+            if hapus_pilihan == "1":
+                data_kesehatan.hapus_di_awal()
+                print("+===============================+")
+                print("|  Data Pasien telah di hapus.  |")
+                print("+===============================+")
+            elif hapus_pilihan == "2":
+                data_kesehatan.hapus_di_akhir()
+                print("+===============================+")
+                print("|  Data Pasien telah di hapus.  |")
+                print("+===============================+")
+            elif hapus_pilihan == "3":
+                posisi_hapus = int(input("Masukkan posisi data yang ingin dihapus: "))
+                data_kesehatan.hapus_di_posisi(posisi_hapus)
+                print("+===============================+")
+                print("|  Data Pasien telah di hapus.  |")
+                print("+===============================+")
+            else:
+                print("+========================+")
+                print("|  Pilihan tidak valid   |")
+                print("+========================+")
+            time.sleep(2)
+            clear_screen()
+            
+        elif pilihan == "6":
+            print("+==========================================================================================+")
+            print("|         Terima kasih telah menggunakan program kesehatan, Sampai jumpa lagi!!!           |")
+            print("+==========================================================================================+")
+            break
+        else:
+            print("+==========================================================================================+")
+            print("|                Pilihan tidak ada di dalam daftar menu data program kesehatan             |")
+            print("+==========================================================================================+")
+            
+if __name__== "__main__":
+    main()
