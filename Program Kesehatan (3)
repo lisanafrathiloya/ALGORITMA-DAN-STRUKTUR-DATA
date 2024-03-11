@@ -110,7 +110,6 @@ class LinkedList:
             current = current.next
             nomor += 1
         print(table)
-
             
     def update_data(self, nama, usia_baru, tinggi_baru, berat_baru):
         current = self.head
@@ -124,34 +123,112 @@ class LinkedList:
             current = current.next
         print("Data kesehatan atas nama {} tidak ditemukan.".format(nama))
         
-    def bubble_sort(self):
-        if not self.head:
-            print("Linked List kosong.")
-            return
-        swapped = True
-        while swapped:
-            current = self.head
-            swapped = False
-            while current.next:
-                if current.data.usia > current.next.data.usia:
-                    current.data, current.next.data = current.next.data, current.data
-                    swapped = True
-                current = current.next
-                
-    def bubble_sort_nama(self):
-        if not self.head:
-            print("Linked List kosong.")
-            return
-        swapped = True
-        while swapped:
-            current = self.head
-            swapped = False
-            while current.next:
-                if current.data.nama > current.next.data.nama:
-                    current.data, current.next.data = current.next.data, current.data
-                    swapped = True
-                current = current.next
+    def quick_sort(self):
+        self.head = self._quick_sort_helper(self.head)
 
+    def _quick_sort_helper(self, node):
+        if node is None or node.next is None:
+            return node
+        
+        pivot = node
+        smaller_head = None
+        smaller_tail = None
+        equal_head = pivot
+        equal_tail = pivot
+        greater_head = None
+        greater_tail = None
+        current = node.next
+
+        while current is not None:
+            next_node = current.next
+            if current.data.usia < pivot.data.usia:
+                if smaller_head is None:
+                    smaller_head = current
+                    smaller_tail = current
+                else:
+                    smaller_tail.next = current
+                    smaller_tail = current
+            elif current.data.usia == pivot.data.usia:
+                equal_tail.next = current
+                equal_tail = current
+            else:
+                if greater_head is None:
+                    greater_head = current
+                    greater_tail = current
+                else:
+                    greater_tail.next = current
+                    greater_tail = current
+            current = next_node
+
+        if smaller_tail is not None:
+            smaller_tail.next = None
+        if greater_tail is not None:
+            greater_tail.next = None
+
+        smaller_sorted = self._quick_sort_helper(smaller_head)
+        greater_sorted = self._quick_sort_helper(greater_head)
+
+        if smaller_sorted is not None:
+            pivot.next = equal_head
+            equal_tail.next = greater_sorted
+            return smaller_sorted
+        else:
+            pivot.next = greater_sorted
+            return equal_head
+    
+    def quick_sort_by_name(self):
+        self.head = self._quick_sort_by_name_helper(self.head)
+
+    def _quick_sort_by_name_helper(self, node):
+        if node is None or node.next is None:
+            return node
+        
+        pivot = node
+        smaller_head = None
+        smaller_tail = None
+        equal_head = pivot
+        equal_tail = pivot
+        greater_head = None
+        greater_tail = None
+        current = node.next
+
+        while current is not None:
+            next_node = current.next
+            if current.data.nama < pivot.data.nama:
+                if smaller_head is None:
+                    smaller_head = current
+                    smaller_tail = current
+                else:
+                    smaller_tail.next = current
+                    smaller_tail = current
+            elif current.data.nama == pivot.data.nama:
+                equal_tail.next = current
+                equal_tail = current
+            else:
+                if greater_head is None:
+                    greater_head = current
+                    greater_tail = current
+                else:
+                    greater_tail.next = current
+                    greater_tail = current
+            current = next_node
+
+        if smaller_tail is not None:
+            smaller_tail.next = None
+        if greater_tail is not None:
+            greater_tail.next = None
+
+        smaller_sorted = self._quick_sort_by_name_helper(smaller_head)
+        greater_sorted = self._quick_sort_by_name_helper(greater_head)
+
+        if smaller_sorted is not None:
+            pivot.next = equal_head
+            equal_tail.next = greater_sorted
+            return smaller_sorted
+        else:
+            pivot.next = greater_sorted
+            return equal_head
+        
 class kesehatan:
     def __init__(self, nama, usia, tinggi, berat):
         self.nama = nama 
@@ -193,7 +270,7 @@ def main():
         print("|         1. Tambah Data Pasien           |")
         print("|         2. Tampilkan Data Pasien        |")
         print("|         3. Update Data Pasien           |")
-        print("|         4. Mengurutkan Data Pasien      |")
+        print("|         4. Sorting Data Pasien          |")
         print("|         5. Hapus Data Pasien            |")
         print("|         6. Keluar Dari Program          |")
         print("+=========================================+")
@@ -227,33 +304,8 @@ def main():
                     print("Berat harus berupa angka. Silahkan di coba lagi.")
                     
             kesehatan_data = kesehatan(nama, usia, tinggi, berat)
-            print("\n+=========================================+")
-            print("|    Metode penambahan data:             |")
-            print("|     1. Di awal                         |")
-            print("|     2. Di posisi tertentu              |")
-            print("|     3. Di akhir                        |")
-            print("+=========================================+")
-            metode_pilihan = input("Masukkan metode penambahan data: ")
-            if metode_pilihan == "1":
-                data_kesehatan.tambah_di_awal(kesehatan_data)
-                bmi = kesehatan_data.hitung_bmi()
-                status = kesehatan_data.status_bmi()
-                print("Data atas nama {} berhasil ditambahkan.".format(nama))
-                print("Status BMI: {}".format(status))
-            elif metode_pilihan == "2":
-                posisi = int(input("Masukkan posisi penambahan data: "))
-                data_kesehatan.tambah_di_posisi(kesehatan_data, posisi)
-                bmi = kesehatan_data.hitung_bmi()
-                status = kesehatan_data.status_bmi()
-                print("Data atas nama {} berhasil ditambahkan.".format(nama))
-                print("Status BMI: {}".format(status))
-            elif metode_pilihan == "3":
-                data_kesehatan.tambah_di_akhir(kesehatan_data)
-                bmi = kesehatan_data.hitung_bmi()
-                status = kesehatan_data.status_bmi()
-                print("Data atas nama {} berhasil ditambahkan.".format(nama))
-            else:
-                print("Pilihan tidak valid.")
+            data_kesehatan.tambah_di_akhir(kesehatan_data)
+            print("Data atas nama {} berhasil ditambahkan.".format(nama))
             time.sleep(2)
             clear_screen()
             
@@ -276,24 +328,23 @@ def main():
                 
         elif pilihan == "4":
             print("\n+=========================================+")
-            print("|       Menu Mengurutkan Data Pasien      |")
+            print("|         Menu Sorting Data Pasien        |")
             print("|=========================================|")
-            print("|     1. Mengurutkan Berdasarkan Usia     |")
-            print("|     2. Mengurutkan Berdasarkan Nama     |")
-            print("|     3. Kembali ke Menu Utama            |")
+            print("|     1. Sorting berdasarkan usia         |")
+            print("|     2. Sorting berdasarkan nama         |")
             print("+=========================================+")
-            sorting_choice = input("Masukkan pilihan untuk melakukan pengurutan: ")
-            if sorting_choice == "1":
-                data_kesehatan.bubble_sort()
+            sorting_pilihan = input("Masukkan pilihan untuk mengurutkan data: ")
+            if sorting_pilihan == "1":
+                data_kesehatan.quick_sort()
                 print("Data berhasil diurutkan berdasarkan usia.")
-            elif sorting_choice == "2":
-                data_kesehatan.bubble_sort_nama()
+            elif sorting_pilihan == "2":
+                data_kesehatan.quick_sort_by_name()
                 print("Data berhasil diurutkan berdasarkan nama.")
-            elif sorting_choice == "3":
-                continue
             else:
                 print("Pilihan tidak valid.")
-                
+            data_kesehatan.tampilan_data()
+            input("Tekan enter untuk kembali ke menu utama...")
+            
         elif pilihan == "5":
             print("\n+=========================================+")
             print("|      Menu Hapus Data Pasien              |")
